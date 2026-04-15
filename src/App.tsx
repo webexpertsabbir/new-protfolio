@@ -362,7 +362,6 @@ export default function App() {
               src="/sabbir-hossain-freelancer.webp" 
               alt="Sabbir Hossen"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-brand-orange/10 mix-blend-overlay" />
           </div>
@@ -457,8 +456,8 @@ export default function App() {
             <div className="flex-1 relative">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
-                  <img src="/chattogram-zoo.webp" alt="Cox's Bazar Sea Beach" className="rounded-2xl aspect-[3/4] object-cover" />
-                  <img src="/sitakunda.webp" alt="Sitakunda Sabbir Hossen" className="rounded-2xl aspect-square object-cover" referrerPolicy="no-referrer" />
+                  <img src="/coxs-bazar.webp" alt="Cox's Bazar Sea Beach" className="rounded-2xl aspect-[3/4] object-cover" />
+                  <img src="/sitakunda.webp" alt="Sitakunda Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
                 </div>
                 <div className="space-y-4 pt-8">
                   <img src="/sohosrodhara-waterfall.webp" alt="Sohosrodhara Waterfall Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
