@@ -456,7 +456,7 @@ export default function App() {
             <div className="flex-1 relative">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
-                  <img src="/coxs-bazar.webp" alt="Cox's Bazar Sea Beach" className="rounded-2xl aspect-[3/4] object-cover" />
+                  <img src="/chattogram-zoo.webp" alt="Chattogram Zoo" className="rounded-2xl aspect-[3/4] object-cover" />
                   <img src="/sitakunda.webp" alt="Sitakunda Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
                 </div>
                 <div className="space-y-4 pt-8">
