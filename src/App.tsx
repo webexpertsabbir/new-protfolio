@@ -32,15 +32,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
-// Import Assets
-import bannerImg from "./assets/sabbir-hossen-banner.webp";
-import freelancerImg from "./assets/sabbir-hossain-freelancer.webp";
-import zooImg from "./assets/chattogram-zoo.webp";
-import sitakundaImg from "./assets/sitakunda.webp";
-import waterfallImg from "./assets/sohosrodhara-waterfall.webp";
-import patuartekImg from "./assets/patuartek-sea-beach.webp";
-import coxsBazarImg from "./assets/coxs-bazar.webp";
-
 const NAV_LINKS = [
   { name: "Home", href: "#home" },
   { name: "About", href: "#about" },
@@ -300,7 +291,7 @@ export default function App() {
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 10, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
-            src={bannerImg} 
+            src="/sabbir-hossen-banner.webp" 
             alt="Cinematic Background"
             className="w-full h-full object-cover opacity-50"
           />
@@ -368,7 +359,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr_1.5fr] gap-16 items-center">
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden group">
             <img 
-              src={freelancerImg} 
+              src="/sabbir-hossain-freelancer.webp" 
               alt="Sabbir Hossen"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
@@ -465,12 +456,12 @@ export default function App() {
             <div className="flex-1 relative">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
-                  <img src={zooImg} alt="Chattogram Zoo" className="rounded-2xl aspect-[3/4] object-cover" />
-                  <img src={sitakundaImg} alt="Sitakunda Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
+                  <img src="/chattogram-zoo.webp" alt="Chattogram Zoo" className="rounded-2xl aspect-[3/4] object-cover" />
+                  <img src="/sitakunda.webp" alt="Sitakunda Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
                 </div>
                 <div className="space-y-4 pt-8">
-                  <img src={waterfallImg} alt="Sohosrodhara Waterfall Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
-                  <img src={patuartekImg} alt="patuartek sea beach cox's bazar Sabbir hossen" className="rounded-2xl aspect-[3/4] object-cover" />
+                  <img src="/sohosrodhara-waterfall.webp" alt="Sohosrodhara Waterfall Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
+                  <img src="/patuartek-sea-beach.webp" alt="patuartek sea beach cox's bazar Sabbir hossen" className="rounded-2xl aspect-[3/4] object-cover" />
                 </div>
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-brand-orange rounded-full flex items-center justify-center animate-pulse">
