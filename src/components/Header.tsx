@@ -23,7 +23,7 @@ export function Header() {
         )}
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <a href="#home" className="text-2xl font-display font-bold tracking-tighter">
+          <a href="/#home" className="text-2xl font-display font-bold tracking-tighter">
             SABBIR<span className="text-brand-orange">.</span>
           </a>
 
