@@ -12,8 +12,10 @@ import {
   Compass,
   Youtube,
   X,
-  Loader2
+  Loader2,
+  ShieldCheck
 } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { cn } from "@/src/lib/utils";
 
 // Import Constants
@@ -38,6 +40,7 @@ export default function Home() {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
@@ -66,8 +69,21 @@ export default function Home() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const onCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!captchaValue) {
+      setSubmitStatus({
+        type: "error",
+        message: "Please complete the reCAPTCHA to verify you are a human."
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: "" });
     
@@ -479,6 +495,15 @@ export default function Home() {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-orange transition-colors" 
                   placeholder="Tell me about your project..."
                 ></textarea>
+              </div>
+
+              {/* reCAPTCHA */}
+              <div className="flex justify-center sm:justify-start">
+                <ReCAPTCHA
+                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || ""}
+                  onChange={onCaptchaChange}
+                  theme="dark"
+                />
               </div>
               
               {submitStatus.type && (
