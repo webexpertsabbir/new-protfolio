@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { NAV_LINKS } from "../constants/navigation";
 
@@ -39,10 +39,13 @@ export function Header() {
               </a>
             ))}
             <a 
-              href="#contact" 
-              className="px-5 py-2 bg-white text-black text-xs font-bold uppercase tracking-widest rounded-full hover:bg-brand-orange hover:text-white transition-all"
+              href="https://wa.me/8801885261824" 
+              target="_blank"
+              rel="noreferrer"
+              className="px-5 py-2 bg-emerald-500 text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-emerald-600 transition-all flex items-center gap-2"
             >
-              Hire Me
+              <MessageCircle className="w-3.5 h-3.5" />
+              WhatsApp
             </a>
           </div>
 
@@ -83,11 +86,14 @@ export function Header() {
               </a>
             ))}
             <a 
-              href="#contact" 
+              href="https://wa.me/8801885261824" 
+              target="_blank"
+              rel="noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="mt-4 px-10 py-4 bg-brand-orange text-white font-bold uppercase tracking-widest text-sm rounded-full"
+              className="mt-4 px-10 py-4 bg-emerald-500 text-white font-bold uppercase tracking-widest text-sm rounded-full flex items-center gap-3"
             >
-              Hire Me
+              <MessageCircle className="w-5 h-5" />
+              WhatsApp
             </a>
           </motion.div>
         )}
