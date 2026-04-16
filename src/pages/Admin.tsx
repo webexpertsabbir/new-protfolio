@@ -92,11 +92,13 @@ export default function Admin() {
     if (!file) return;
 
     setUploading(true);
+    setError(null);
     try {
       const url = await uploadProjectImage(file);
       setNewProject(prev => ({ ...prev, imageUrl: url }));
-    } catch (error) {
-      alert("Image upload failed!");
+    } catch (err: any) {
+      console.error("Image upload error:", err);
+      setError(`Image upload failed: ${err.message || "Unknown error"}. Please ensure Firebase Storage is enabled in your console.`);
     } finally {
       setUploading(false);
     }
@@ -248,12 +250,13 @@ export default function Admin() {
                     ) : newProject.imageUrl ? (
                       <div className="text-center">
                         <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-                        <span className="text-[10px] uppercase font-bold text-emerald-500">Image Uploaded</span>
+                        <span className="text-[10px] uppercase font-bold text-emerald-500">Image Uploaded to ImgBB</span>
+                        <p className="text-[8px] text-white/20 mt-1 truncate max-w-[200px]">{newProject.imageUrl}</p>
                       </div>
                     ) : (
                       <>
                         <ImageIcon className="w-8 h-8 text-white/20 group-hover:text-brand-orange transition-colors" />
-                        <span className="text-[10px] uppercase font-bold text-white/40">Click to Upload</span>
+                        <span className="text-[10px] uppercase font-bold text-white/40">Click to Upload (Powered by ImgBB)</span>
                       </>
                     )}
                   </label>

@@ -67,13 +67,27 @@ export const deleteProject = async (projectId: string, imageUrl: string) => {
   }
 };
 
+const IMGBB_API_KEY = "d31738916419818a85f7264369fffd78";
+
 export const uploadProjectImage = async (file: File): Promise<string> => {
   try {
-    const storageRef = ref(storage, `projects/${Date.now()}_${file.name}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    return await getDownloadURL(snapshot.ref);
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data.url;
+    } else {
+      throw new Error(data.error.message || "ImgBB upload failed");
+    }
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Error uploading image to ImgBB:", error);
     throw error;
   }
 };
