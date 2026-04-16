@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: projects
+    // Fields:
+    //   - title: string (required)
+    //   - category: string (required)
+    //   - imageUrl: string (required)
+    //   - link: string (required)
+    //   - description: string (optional)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: users
+    // Fields:
+    //   - email: string
+    //   - role: string
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "swufwebpro@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'category', 'imageUrl', 'link', 'createdAt']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.category is string && data.category.size() > 0 &&
+             data.imageUrl is string && data.imageUrl.matches("^https?://.*") &&
+             data.link is string && data.link.matches("^https?://.*") &&
+             (!('description' in data) || (data.description is string && data.description.size() < 1000));
+    }
+
+    // Projects Collection
+    match /projects/{projectId} {
+      allow read: if true; // Publicly readable for portfolio
+      allow create, update, delete: if isAdmin() && (request.method == 'delete' || isValidProject(request.resource.data));
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}

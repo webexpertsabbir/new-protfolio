@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Code, 
@@ -11,21 +11,24 @@ import {
   Play,
   Compass,
   Youtube,
-  X
+  X,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
 // Import Constants
 import { SERVICES } from "../constants/services";
 import { INTERESTS } from "../constants/interests";
-import { PROJECTS } from "../constants/projects";
 
 // Import Services
 import { sendEmail } from "../services/emailService";
+import { getProjects, Project } from "../services/projectService";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("All");
-  const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -37,6 +40,20 @@ export default function Home() {
     type: "success" | "error" | null;
     message: string;
   }>({ type: null, message: "" });
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getProjects();
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -74,8 +91,8 @@ export default function Home() {
   };
 
   const filteredProjects = activeTab === "All" 
-    ? PROJECTS 
-    : PROJECTS.filter(p => p.category === activeTab);
+    ? projects 
+    : projects.filter(p => p.category === activeTab);
 
   return (
     <main>
@@ -286,39 +303,46 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project) => (
-                <motion.div 
-                  key={project.title}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
-                  onClick={() => setSelectedProject(project)}
-                  className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50"
-                >
-                  <div className="w-full h-full overflow-hidden">
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      className="w-full h-full object-cover object-top transition-all duration-[5000ms] ease-in-out group-hover:object-bottom"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                    <span className="text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-2">{project.category}</span>
-                    <h3 className="text-2xl font-display font-bold uppercase tracking-tighter mb-4">{project.title}</h3>
-                    <div className="flex items-center gap-4">
-                      <button className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-brand-orange hover:text-white transition-colors">
-                        <Play className="w-4 h-4 fill-current" />
-                      </button>
-                      <span className="text-[10px] font-bold uppercase tracking-widest">View Details</span>
+            {loadingProjects ? (
+              <div className="col-span-full py-20 flex flex-col items-center justify-center gap-4">
+                <Loader2 className="w-10 h-10 text-brand-orange animate-spin" />
+                <p className="text-white/40 uppercase tracking-widest text-xs font-bold">Loading Portfolio...</p>
+              </div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {filteredProjects.map((project) => (
+                  <motion.div 
+                    key={project.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.4 }}
+                    onClick={() => setSelectedProject(project)}
+                    className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50"
+                  >
+                    <div className="w-full h-full overflow-hidden">
+                      <img 
+                        src={project.imageUrl} 
+                        alt={project.title}
+                        className="w-full h-full object-cover object-top transition-all duration-[5000ms] ease-in-out group-hover:object-bottom"
+                        referrerPolicy="no-referrer"
+                      />
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                      <span className="text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-2">{project.category}</span>
+                      <h3 className="text-2xl font-display font-bold uppercase tracking-tighter mb-4">{project.title}</h3>
+                      <div className="flex items-center gap-4">
+                        <button className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-brand-orange hover:text-white transition-colors">
+                          <Play className="w-4 h-4 fill-current" />
+                        </button>
+                        <span className="text-[10px] font-bold uppercase tracking-widest">View Details</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </div>
           
           <div className="mt-16 text-center">
@@ -494,7 +518,7 @@ export default function Home() {
               <div className="grid md:grid-cols-2">
                 <div className="h-[250px] sm:h-[400px] md:h-[600px] overflow-hidden group/modal">
                   <img 
-                    src={selectedProject.image} 
+                    src={selectedProject.imageUrl} 
                     alt={selectedProject.title}
                     className="w-full h-full object-cover object-top transition-all duration-[8000ms] ease-in-out hover:object-bottom"
                     referrerPolicy="no-referrer"

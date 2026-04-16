@@ -17,17 +17,25 @@ import {
 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 // Import Components
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import Home from "./pages/Home";
+import Admin from "./pages/Admin";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-brand-dark selection:bg-brand-orange selection:text-white">
-      <Header />
-      <Home />
-      <Footer />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-brand-dark selection:bg-brand-orange selection:text-white">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 }
