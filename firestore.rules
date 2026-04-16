@@ -41,10 +41,21 @@ service cloud.firestore {
              (!('description' in data) || (data.description is string && data.description.size() < 1000));
     }
 
+    function isValidCategory(data) {
+      return data.keys().hasAll(['name']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 50;
+    }
+
     // Projects Collection
     match /projects/{projectId} {
       allow read: if true; // Publicly readable for portfolio
       allow create, update, delete: if isAdmin() && (request.method == 'delete' || isValidProject(request.resource.data));
+    }
+
+    // Categories Collection
+    match /categories/{categoryId} {
+      allow read: if true; // Publicly readable
+      allow create, update, delete: if isAdmin() && (request.method == 'delete' || isValidCategory(request.resource.data));
     }
 
     // Users Collection

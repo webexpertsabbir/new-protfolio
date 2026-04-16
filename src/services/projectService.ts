@@ -23,8 +23,59 @@ export interface Project {
   createdAt?: Timestamp;
 }
 
-const COLLECTION_NAME = "projects";
+export interface Category {
+  id?: string;
+  name: string;
+}
 
+const COLLECTION_NAME = "projects";
+const CATEGORIES_COLLECTION = "categories";
+
+// Categories Functions
+export const getCategories = async (): Promise<Category[]> => {
+  try {
+    const q = query(collection(db, CATEGORIES_COLLECTION), orderBy("name", "asc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Category));
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+};
+
+export const addCategory = async (name: string) => {
+  try {
+    const docRef = await addDoc(collection(db, CATEGORIES_COLLECTION), { name });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding category:", error);
+    throw error;
+  }
+};
+
+export const updateCategory = async (id: string, name: string) => {
+  try {
+    const docRef = doc(db, CATEGORIES_COLLECTION, id);
+    await updateDoc(docRef, { name });
+  } catch (error) {
+    console.error("Error updating category:", error);
+    throw error;
+  }
+};
+
+export const deleteCategory = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, CATEGORIES_COLLECTION, id));
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    throw error;
+  }
+};
+
+// Projects Functions
 export const getProjects = async (): Promise<Project[]> => {
   try {
     const q = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));

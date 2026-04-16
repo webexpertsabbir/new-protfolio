@@ -16,7 +16,8 @@ import {
   Loader2, 
   ExternalLink,
   ShieldCheck,
-  X
+  X,
+  Code
 } from "lucide-react";
 import { auth } from "../firebase";
 import { 
@@ -25,7 +26,12 @@ import {
   updateProject,
   deleteProject, 
   uploadProjectImage, 
-  Project 
+  getCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+  Project,
+  Category
 } from "../services/projectService";
 import { cn } from "@/src/lib/utils";
 
@@ -36,13 +42,19 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   
+  // Category State
+  const [newCatName, setNewCatName] = useState("");
+  const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [isAddingCat, setIsAddingCat] = useState(false);
+  
   const initialFormState = {
     title: "",
-    category: "WordPress",
+    category: "",
     imageUrl: "",
     link: "",
     description: ""
@@ -57,6 +69,7 @@ export default function Admin() {
       if (u) {
         if (u.email === ADMIN_EMAIL) {
           fetchProjects();
+          fetchCategories();
           setError(null);
         } else {
           setError(`Access denied. ${u.email} is not authorized.`);
@@ -76,6 +89,18 @@ export default function Admin() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+      if (data.length > 0 && !newProject.category) {
+        setNewProject(p => ({ ...p, category: data[0].name }));
+      }
+    } catch (err) {
+      console.error("Categories fetch error:", err);
+    }
+  };
+
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
     setError(null);
@@ -88,6 +113,41 @@ export default function Admin() {
       } else {
         setError(err.message || "Login failed. Please try again.");
       }
+    }
+  };
+
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCatName.trim()) return;
+    setIsAddingCat(true);
+    try {
+      if (editingCatId) {
+        await updateCategory(editingCatId, newCatName.trim());
+      } else {
+        await addCategory(newCatName.trim());
+      }
+      setNewCatName("");
+      setEditingCatId(null);
+      fetchCategories();
+    } catch (err) {
+      alert("Error managing category");
+    } finally {
+      setIsAddingCat(false);
+    }
+  };
+
+  const handleEditCategory = (cat: Category) => {
+    setEditingCatId(cat.id!);
+    setNewCatName(cat.name);
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    if (!window.confirm("Are you sure? Projects in this category will stay, but the category choice will be gone.")) return;
+    try {
+      await deleteCategory(id);
+      fetchCategories();
+    } catch (err) {
+      alert("Error deleting category");
     }
   };
 
@@ -214,8 +274,49 @@ export default function Admin() {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_2fr] gap-12">
-          {/* Add/Edit Project Form */}
-          <div className="glass-card p-8 rounded-3xl h-fit sticky top-32">
+          {/* Left Column: Forms */}
+          <div className="space-y-8 h-fit lg:sticky lg:top-32">
+            {/* Category Management */}
+            <div className="glass-card p-6 rounded-3xl">
+              <h3 className="text-xl font-display font-bold uppercase mb-6 flex items-center gap-2">
+                <Code className="w-5 h-5 text-brand-orange" />
+                Manage Categories
+              </h3>
+              <form onSubmit={handleAddCategory} className="flex gap-2 mb-6">
+                <input 
+                  type="text"
+                  value={newCatName}
+                  onChange={e => setNewCatName(e.target.value)}
+                  placeholder="Category Name"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-brand-orange transition-colors"
+                />
+                <button 
+                  type="submit"
+                  disabled={isAddingCat}
+                  className="px-4 py-2 bg-brand-orange text-white rounded-xl text-[10px] font-bold uppercase tracking-widest whitespace-nowrap"
+                >
+                  {isAddingCat ? "..." : editingCatId ? "Update" : "Add"}
+                </button>
+              </form>
+
+              <div className="flex flex-wrap gap-2">
+                {categories.map(cat => (
+                  <div key={cat.id} className="group flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full hover:border-brand-orange transition-all">
+                    <span className="text-[10px] font-medium text-white/60">{cat.name}</span>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleEditCategory(cat)} className="text-white/40 hover:text-white"><Edit3 className="w-3 h-3" /></button>
+                      <button onClick={() => handleDeleteCategory(cat.id!)} className="text-white/40 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  </div>
+                ))}
+                {categories.length === 0 && (
+                  <p className="text-[10px] text-white/20 italic">No categories added yet.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Add/Edit Project Form */}
+            <div className="glass-card p-8 rounded-3xl">
             <h2 className="text-2xl font-display font-bold uppercase mb-8 flex items-center justify-between">
               <span className="flex items-center gap-3">
                 {editingId ? <Edit3 className="text-brand-orange" /> : <Plus className="text-brand-orange" />}
@@ -246,15 +347,22 @@ export default function Admin() {
 
               <div className="space-y-2">
                 <label className="text-[10px] uppercase tracking-widest font-bold text-white/40">Category</label>
-                <select 
-                  value={newProject.category}
-                  onChange={e => setNewProject(p => ({ ...p, category: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-orange transition-colors appearance-none"
-                >
-                  {["WordPress", "WordPress WooCommerce", "React JS", "Next JS"].map(cat => (
-                    <option key={cat} value={cat} className="bg-brand-dark">{cat}</option>
-                  ))}
-                </select>
+                <div className="flex gap-2">
+                  <select 
+                    value={newProject.category}
+                    onChange={e => setNewProject(p => ({ ...p, category: e.target.value }))}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-orange transition-colors appearance-none"
+                    required
+                  >
+                    <option value="" disabled className="bg-brand-dark">Select Category</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.name} className="bg-brand-dark">{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+                {categories.length === 0 && (
+                  <p className="text-[8px] text-brand-orange mt-1">Please add a category first.</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -322,8 +430,9 @@ export default function Admin() {
               )}
             </form>
           </div>
+        </div>
 
-          {/* Project List */}
+        {/* Project List */}
           <div className="space-y-6">
             <h2 className="text-2xl font-display font-bold uppercase mb-8">Live Projects ({projects.length})</h2>
             <div className="grid sm:grid-cols-2 gap-6">

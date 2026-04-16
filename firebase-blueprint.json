@@ -22,12 +22,25 @@
         "email": { "type": "string" },
         "role": { "type": "string", "enum": ["admin", "user"] }
       }
+    },
+    "Category": {
+      "title": "Category",
+      "description": "A project category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Category name" }
+      },
+      "required": ["name"]
     }
   },
   "firestore": {
     "/projects/{projectId}": {
       "schema": "Project",
       "description": "Collection of portfolio projects"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Collection of project categories"
     },
     "/users/{userId}": {
       "schema": "User",

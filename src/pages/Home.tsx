@@ -24,7 +24,7 @@ import { INTERESTS } from "../constants/interests";
 
 // Import Services
 import { sendEmail } from "../services/emailService";
-import { getProjects, Project } from "../services/projectService";
+import { getProjects, getCategories, Project } from "../services/projectService";
 
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -47,21 +47,28 @@ export default function Home() {
   }>({ type: null, message: "" });
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getProjects();
-        setProjects(data);
+        const [projectsData, categoriesData] = await Promise.all([
+          getProjects(),
+          getCategories()
+        ]);
         
-        // Extract unique categories that have projects
-        const uniqueCategories = ["All", ...new Set(data.map(p => p.category))];
-        setCategories(uniqueCategories);
+        setProjects(projectsData);
+        
+        if (categoriesData.length > 0) {
+          setCategories(["All", ...categoriesData.map(c => c.name)]);
+        } else {
+          const uniqueCategories = ["All", ...new Set(projectsData.map(p => p.category))];
+          setCategories(uniqueCategories);
+        }
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoadingProjects(false);
       }
     };
-    fetchProjects();
+    fetchData();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
