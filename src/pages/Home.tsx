@@ -25,8 +25,10 @@ import { sendEmail } from "../services/emailService";
 import { getProjects, Project } from "../services/projectService";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("All");
   const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
+  const [activeTab, setActiveTab] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(6);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [formData, setFormData] = useState({
@@ -46,6 +48,10 @@ export default function Home() {
       try {
         const data = await getProjects();
         setProjects(data);
+        
+        // Extract unique categories that have projects
+        const uniqueCategories = ["All", ...new Set(data.map(p => p.category))];
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching projects:", error);
       } finally {
@@ -93,6 +99,17 @@ export default function Home() {
   const filteredProjects = activeTab === "All" 
     ? projects 
     : projects.filter(p => p.category === activeTab);
+
+  const visibleProjects = filteredProjects.slice(0, visibleCount);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setVisibleCount(6); // Reset to 6 when tab changes
+  };
+
+  const loadMore = () => {
+    setVisibleCount(prev => prev + 6);
+  };
 
   return (
     <main>
@@ -285,10 +302,10 @@ export default function Home() {
               <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter uppercase">Portfolio</h2>
             </div>
             <div className="flex flex-wrap gap-2 md:gap-3">
-              {["All", "WordPress", "WordPress WooCommerce", "React JS", "Next JS"].map((tab) => (
+              {categories.map((tab) => (
                 <button 
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => handleTabChange(tab)}
                   className={cn(
                     "px-6 py-2 rounded-full border text-xs font-bold uppercase tracking-widest transition-all",
                     activeTab === tab 
@@ -310,7 +327,7 @@ export default function Home() {
               </div>
             ) : (
               <AnimatePresence mode="popLayout">
-                {filteredProjects.map((project) => (
+                {visibleProjects.map((project) => (
                   <motion.div 
                     key={project.id}
                     layout
@@ -345,11 +362,16 @@ export default function Home() {
             )}
           </div>
           
-          <div className="mt-16 text-center">
-            <button className="px-12 py-5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-              Explore All Projects
-            </button>
-          </div>
+          {filteredProjects.length > visibleCount && (
+            <div className="mt-16 text-center">
+              <button 
+                onClick={loadMore}
+                className="px-12 py-5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all"
+              >
+                Load More Projects
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
