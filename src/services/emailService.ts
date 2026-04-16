@@ -1,8 +1,8 @@
 import emailjs from "@emailjs/browser";
 
-const SERVICE_ID = "service_76fwtld";
-const TEMPLATE_ID = "template_5hjl8sg";
-const PUBLIC_KEY = "8cuzuhLX4FAUmIj1T";
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 interface EmailParams {
   name: string;

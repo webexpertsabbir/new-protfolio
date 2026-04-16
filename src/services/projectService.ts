@@ -78,9 +78,12 @@ export const updateProject = async (projectId: string, project: Partial<Omit<Pro
   }
 };
 
-const IMGBB_API_KEY = "d31738916419818a85f7264369fffd78";
+const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 
 export const uploadProjectImage = async (file: File): Promise<string> => {
+  if (!IMGBB_API_KEY) {
+    throw new Error("ImgBB API Key is not configured in environment variables.");
+  }
   try {
     const formData = new FormData();
     formData.append("image", file);

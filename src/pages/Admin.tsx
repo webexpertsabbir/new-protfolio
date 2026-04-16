@@ -29,7 +29,7 @@ import {
 } from "../services/projectService";
 import { cn } from "@/src/lib/utils";
 
-const ADMIN_EMAIL = "swufwebpro@gmail.com";
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
