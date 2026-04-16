@@ -10,16 +10,19 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Plus, 
   Trash2, 
+  Edit3,
   LogOut, 
   Image as ImageIcon, 
   Loader2, 
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  X
 } from "lucide-react";
 import { auth } from "../firebase";
 import { 
   getProjects, 
   addProject, 
+  updateProject,
   deleteProject, 
   uploadProjectImage, 
   Project 
@@ -34,15 +37,18 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   
-  const [newProject, setNewProject] = useState({
+  const initialFormState = {
     title: "",
     category: "WordPress",
     imageUrl: "",
     link: "",
     description: ""
-  });
+  };
+
+  const [newProject, setNewProject] = useState(initialFormState);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -110,15 +116,38 @@ export default function Admin() {
 
     setIsAdding(true);
     try {
-      await addProject(newProject);
-      setNewProject({ title: "", category: "WordPress", imageUrl: "", link: "", description: "" });
+      if (editingId) {
+        await updateProject(editingId, newProject);
+        alert("Project updated successfully!");
+      } else {
+        await addProject(newProject);
+        alert("Project added successfully!");
+      }
+      setNewProject(initialFormState);
+      setEditingId(null);
       fetchProjects();
-      alert("Project added successfully!");
     } catch (error) {
-      alert("Error adding project!");
+      alert(editingId ? "Error updating project!" : "Error adding project!");
     } finally {
       setIsAdding(false);
     }
+  };
+
+  const handleEdit = (project: Project) => {
+    setEditingId(project.id!);
+    setNewProject({
+      title: project.title,
+      category: project.category,
+      imageUrl: project.imageUrl,
+      link: project.link,
+      description: project.description || ""
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setNewProject(initialFormState);
   };
 
   const handleDelete = async (id: string, imageUrl: string) => {
@@ -185,10 +214,22 @@ export default function Admin() {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_2fr] gap-12">
-          {/* Add Project Form */}
+          {/* Add/Edit Project Form */}
           <div className="glass-card p-8 rounded-3xl h-fit sticky top-32">
-            <h2 className="text-2xl font-display font-bold uppercase mb-8 flex items-center gap-3">
-              <Plus className="text-brand-orange" /> Add Project
+            <h2 className="text-2xl font-display font-bold uppercase mb-8 flex items-center justify-between">
+              <span className="flex items-center gap-3">
+                {editingId ? <Edit3 className="text-brand-orange" /> : <Plus className="text-brand-orange" />}
+                {editingId ? "Edit Project" : "Add Project"}
+              </span>
+              {editingId && (
+                <button 
+                  onClick={cancelEdit}
+                  className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                  title="Cancel Edit"
+                >
+                  <X className="w-5 h-5 text-white/40" />
+                </button>
+              )}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
@@ -268,8 +309,17 @@ export default function Admin() {
                 disabled={isAdding || uploading}
                 className="w-full py-4 bg-brand-orange text-white font-bold uppercase tracking-[0.3em] text-xs rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Publish Project"}
+                {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : editingId ? "Update Project" : "Publish Project"}
               </button>
+              {editingId && (
+                <button 
+                  type="button"
+                  onClick={cancelEdit}
+                  className="w-full py-4 border border-white/10 text-white/60 font-bold uppercase tracking-[0.3em] text-xs rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Cancel Edit
+                </button>
+              )}
             </form>
           </div>
 
@@ -299,12 +349,21 @@ export default function Admin() {
                           target="_blank" 
                           rel="noreferrer"
                           className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center hover:bg-brand-orange transition-colors"
+                          title="Preview Live"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </a>
                         <button 
+                          onClick={() => handleEdit(project)}
+                          className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+                          title="Edit Project"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button 
                           onClick={() => handleDelete(project.id!, project.imageUrl)}
                           className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center hover:bg-red-500 transition-colors"
+                          title="Delete Project"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

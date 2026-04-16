@@ -5,6 +5,7 @@ import {
   query, 
   orderBy, 
   deleteDoc, 
+  updateDoc,
   doc, 
   serverTimestamp,
   Timestamp 
@@ -63,6 +64,16 @@ export const deleteProject = async (projectId: string, imageUrl: string) => {
     }
   } catch (error) {
     console.error("Error deleting project:", error);
+    throw error;
+  }
+};
+
+export const updateProject = async (projectId: string, project: Partial<Omit<Project, "id" | "createdAt">>) => {
+  try {
+    const docRef = doc(db, COLLECTION_NAME, projectId);
+    await updateDoc(docRef, project);
+  } catch (error) {
+    console.error("Error updating project:", error);
     throw error;
   }
 };
