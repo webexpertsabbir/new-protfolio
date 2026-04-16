@@ -93,9 +93,13 @@ export default function Admin() {
     try {
       const data = await getCategories();
       setCategories(data);
-      if (data.length > 0 && !newProject.category) {
-        setNewProject(p => ({ ...p, category: data[0].name }));
-      }
+      // Only set dynamic default if we're not currently editing a project or have already set one
+      setNewProject(p => {
+        if (!p.category && data.length > 0) {
+          return { ...p, category: data[0].name };
+        }
+        return p;
+      });
     } catch (err) {
       console.error("Categories fetch error:", err);
     }
@@ -358,6 +362,10 @@ export default function Admin() {
                     {categories.map(cat => (
                       <option key={cat.id} value={cat.name} className="bg-brand-dark">{cat.name}</option>
                     ))}
+                    {/* Fallback in case the current category isn't in the list anymore */}
+                    {newProject.category && !categories.some(c => c.name === newProject.category) && (
+                      <option value={newProject.category} className="bg-brand-dark">{newProject.category}</option>
+                    )}
                   </select>
                 </div>
                 {categories.length === 0 && (
