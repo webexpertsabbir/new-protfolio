@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/src/lib/utils";
 import { NAV_LINKS } from "../constants/navigation";
 
@@ -9,8 +10,14 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 50;
+      setIsScrolled((prev) => {
+        if (prev !== scrolled) return scrolled;
+        return prev;
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -23,20 +30,30 @@ export function Header() {
         )}
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <a href="/#home" className="text-2xl font-display font-bold tracking-tighter">
+          <Link to="/" className="text-2xl font-display font-bold tracking-tighter">
             SABBIR<span className="text-brand-orange">.</span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href}
-                className="text-sm font-medium text-white/70 hover:text-white transition-colors uppercase tracking-widest"
-              >
-                {link.name}
-              </a>
+              link.name === "Home" ? (
+                <Link 
+                  key={link.name} 
+                  to="/"
+                  className="text-sm font-medium text-white/70 hover:text-white transition-colors uppercase tracking-widest"
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <a 
+                  key={link.name} 
+                  href={link.href}
+                  className="text-sm font-medium text-white/70 hover:text-white transition-colors uppercase tracking-widest"
+                >
+                  {link.name}
+                </a>
+              )
             ))}
             <a 
               href="https://wa.me/8801885261824" 
@@ -76,14 +93,25 @@ export function Header() {
               <X className="w-8 h-8" />
             </button>
             {NAV_LINKS.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-4xl font-display font-bold uppercase tracking-tighter hover:text-brand-orange transition-colors"
-              >
-                {link.name}
-              </a>
+              link.name === "Home" ? (
+                <Link 
+                  key={link.name} 
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-4xl font-display font-bold uppercase tracking-tighter hover:text-brand-orange transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <a 
+                  key={link.name} 
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-4xl font-display font-bold uppercase tracking-tighter hover:text-brand-orange transition-colors"
+                >
+                  {link.name}
+                </a>
+              )
             ))}
             <a 
               href="https://wa.me/8801885261824" 

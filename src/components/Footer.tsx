@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export function Footer() {
   return (
     <footer className="py-12 px-6 border-t border-white/5 bg-brand-dark">
@@ -5,12 +7,12 @@ export function Footer() {
         <p className="text-white/20 text-[10px] uppercase tracking-[0.5em] font-bold">
           &copy; {new Date().getFullYear()} Sabbir Hossen. All Rights Reserved.
         </p>
-        <a 
-          href="/admin" 
+        <Link 
+          to="/admin" 
           className="text-[10px] text-white/10 hover:text-brand-orange transition-colors uppercase tracking-widest font-bold"
         >
           Admin Dashboard
-        </a>
+        </Link>
       </div>
     </footer>
   );

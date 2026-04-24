@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Helmet } from "react-helmet-async";
 import { 
   Code, 
   Globe, 
@@ -119,11 +120,15 @@ export default function Home() {
     }
   };
 
-  const filteredProjects = activeTab === "All" 
-    ? projects 
-    : projects.filter(p => p.category === activeTab);
+  const filteredProjects = useMemo(() => 
+    activeTab === "All" 
+      ? projects 
+      : projects.filter(p => p.category === activeTab),
+  [activeTab, projects]);
 
-  const visibleProjects = filteredProjects.slice(0, visibleCount);
+  const visibleProjects = useMemo(() => 
+    filteredProjects.slice(0, visibleCount),
+  [filteredProjects, visibleCount]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -135,7 +140,17 @@ export default function Home() {
   };
 
   return (
-    <main>
+    <>
+      <Helmet>
+        <title>Sabbir Hossen | Web Developer & Visual Storyteller</title>
+        <meta name="description" content="Portfolio of Sabbir Hossen - Professional Web Developer specializing in React, Next.js, and WordPress. Travel Filmmaker & Cinematographer." />
+        <meta name="keywords" content="Sabbir Hossen, Web Developer, React Developer, WordPress Expert, Filmmaker, Freelancer Bangladesh, Portfolio" />
+        <meta property="og:title" content="Sabbir Hossen | Web Developer & Visual Storyteller" />
+        <meta property="og:description" content="Crafting high-performance web experiences and cinematic narratives since 2022." />
+        <meta property="og:image" content="/sabbir-hossain-freelancer.webp" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+      <main>
       {/* Hero Section */}
       <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -199,12 +214,20 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-16 md:py-24 px-6">
+      <motion.section 
+        id="about" 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="py-16 md:py-24 px-6"
+      >
         <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr_1.5fr] gap-10 md:gap-16 items-center">
           <div className="relative aspect-[4/5] md:aspect-[4/5] rounded-2xl overflow-hidden group max-w-md mx-auto md:max-w-none w-full">
             <img 
               src="/sabbir-hossain-freelancer.webp" 
               alt="Sabbir Hossen"
+              loading="lazy"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-brand-orange/10 mix-blend-overlay" />
@@ -240,10 +263,17 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Expertise Section */}
-      <section id="expertise" className="py-16 md:py-24 px-6 bg-white/5">
+      <motion.section 
+        id="expertise" 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="py-16 md:py-24 px-6 bg-white/5"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16">
             <span className="text-brand-orange font-bold uppercase tracking-widest text-xs mb-4 block">Core Skills</span>
@@ -270,10 +300,17 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Lifestyle/Interests Section */}
-      <section id="lifestyle" className="py-16 md:py-24 px-6">
+      <motion.section 
+        id="lifestyle" 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="py-16 md:py-24 px-6"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
             <div className="flex-1 w-full">
@@ -300,12 +337,12 @@ export default function Home() {
             <div className="flex-1 relative w-full">
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-2 sm:space-y-4">
-                  <img src="/chattogram-zoo.webp" alt="Chattogram Zoo" className="rounded-2xl aspect-[3/4] object-cover" />
-                  <img src="/sitakunda.webp" alt="Sitakunda Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
+                  <img src="/chattogram-zoo.webp" alt="Chattogram Zoo" loading="lazy" className="rounded-2xl aspect-[3/4] object-cover" />
+                  <img src="/sitakunda.webp" alt="Sitakunda Sabbir Hossen" loading="lazy" className="rounded-2xl aspect-square object-cover" />
                 </div>
                 <div className="space-y-2 sm:space-y-4 pt-4 sm:pt-8">
-                  <img src="/sohosrodhara-waterfall.webp" alt="Sohosrodhara Waterfall Sabbir Hossen" className="rounded-2xl aspect-square object-cover" />
-                  <img src="/patuartek-sea-beach.webp" alt="patuartek sea beach cox's bazar Sabbir hossen" className="rounded-2xl aspect-[3/4] object-cover" />
+                  <img src="/sohosrodhara-waterfall.webp" alt="Sohosrodhara Waterfall Sabbir Hossen" loading="lazy" className="rounded-2xl aspect-square object-cover" />
+                  <img src="/patuartek-sea-beach.webp" alt="patuartek sea beach cox's bazar Sabbir hossen" loading="lazy" className="rounded-2xl aspect-[3/4] object-cover" />
                 </div>
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-brand-orange rounded-full flex items-center justify-center animate-pulse">
@@ -314,10 +351,17 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Portfolio Section */}
-      <section id="work" className="py-16 md:py-24 px-6 bg-white/5">
+      <motion.section 
+        id="work" 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="py-16 md:py-24 px-6 bg-white/5"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-8">
             <div>
@@ -342,7 +386,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[600px]">
             {loadingProjects ? (
               <div className="col-span-full py-20 flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-10 h-10 text-brand-orange animate-spin" />
@@ -357,14 +401,18 @@ export default function Home() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ 
+                      duration: 0.6,
+                      ease: [0.22, 1, 0.36, 1] // Custom quint ease for smoother slide
+                    }}
                     onClick={() => setSelectedProject(project)}
-                    className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50"
+                    className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50 border border-white/5"
                   >
                     <div className="w-full h-full overflow-hidden">
                       <img 
                         src={project.imageUrl} 
                         alt={project.title}
+                        loading="lazy"
                         className="w-full h-full object-cover object-top transition-all duration-[5000ms] ease-in-out group-hover:object-bottom"
                         referrerPolicy="no-referrer"
                       />
@@ -396,10 +444,17 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-16 md:py-24 px-6 relative overflow-hidden">
+      <motion.section 
+        id="contact" 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="py-16 md:py-24 px-6 relative overflow-hidden"
+      >
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16">
@@ -543,7 +598,7 @@ export default function Home() {
             </form>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Project Modal */}
       <AnimatePresence>
@@ -634,5 +689,6 @@ export default function Home() {
         }
       `}</style>
     </main>
+    </>
   );
 }

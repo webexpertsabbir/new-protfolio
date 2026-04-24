@@ -7,6 +7,7 @@ import {
   User
 } from "firebase/auth";
 import { motion, AnimatePresence } from "motion/react";
+import { Helmet } from "react-helmet-async";
 import { 
   Plus, 
   Trash2, 
@@ -19,6 +20,7 @@ import {
   X,
   Code
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { auth } from "../firebase";
 import { 
   getProjects, 
@@ -235,7 +237,12 @@ export default function Admin() {
 
   if (!user || user.email !== ADMIN_EMAIL) {
     return (
-      <div className="min-h-screen bg-brand-dark flex flex-col items-center justify-center px-6">
+      <>
+        <Helmet>
+          <title>Admin Access | Sabbir Hossen</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        <div className="min-h-screen bg-brand-dark flex flex-col items-center justify-center px-6">
         <ShieldCheck className="w-20 h-20 text-brand-orange mb-8 opacity-20" />
         <h1 className="text-4xl font-display font-bold uppercase tracking-tighter mb-4">Admin Access</h1>
         <p className="text-white/40 mb-8 text-center max-w-md">
@@ -254,15 +261,21 @@ export default function Admin() {
         >
           Sign in with Google
         </button>
-        <a href="/" className="mt-8 text-white/20 hover:text-white transition-colors text-xs uppercase tracking-widest">
+        <Link to="/" className="mt-8 text-white/20 hover:text-white transition-colors text-xs uppercase tracking-widest">
           Back to Website
-        </a>
+        </Link>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark pt-32 pb-24 px-6">
+    <>
+      <Helmet>
+        <title>Admin Dashboard | Sabbir Hossen</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen bg-brand-dark pt-32 pb-24 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <div>
@@ -498,5 +511,6 @@ export default function Admin() {
         </div>
       </div>
     </div>
-  );
+  </>
+);
 }
