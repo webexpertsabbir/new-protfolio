@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Helmet } from "react-helmet-async";
+import { ProjectSkeleton } from "../components/Skeleton";
+
 import { 
   Code, 
   Globe, 
@@ -13,7 +15,6 @@ import {
   Compass,
   Youtube,
   X,
-  Loader2,
   ShieldCheck
 } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -388,22 +389,21 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[600px]">
             {loadingProjects ? (
-              <div className="col-span-full py-20 flex flex-col items-center justify-center gap-4">
-                <Loader2 className="w-10 h-10 text-brand-orange animate-spin" />
-                <p className="text-white/40 uppercase tracking-widest text-xs font-bold">Loading Portfolio...</p>
-              </div>
+              Array.from({ length: 6 }).map((_, i) => (
+                <ProjectSkeleton key={i} />
+              ))
             ) : (
-              <AnimatePresence mode="popLayout">
+              <AnimatePresence>
                 {visibleProjects.map((project) => (
                   <motion.div 
                     key={project.id}
                     layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{ 
-                      duration: 0.6,
-                      ease: [0.22, 1, 0.36, 1] // Custom quint ease for smoother slide
+                      duration: 0.4,
+                      ease: "easeOut"
                     }}
                     onClick={() => setSelectedProject(project)}
                     className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50 border border-white/5"
