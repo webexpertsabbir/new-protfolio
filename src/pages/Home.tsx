@@ -355,12 +355,8 @@ export default function Home() {
       </motion.section>
 
       {/* Portfolio Section */}
-      <motion.section 
+      <section 
         id="work" 
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
         className="py-16 md:py-24 px-6 bg-white/5"
       >
         <div className="max-w-7xl mx-auto">
@@ -387,48 +383,51 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[600px]">
+          <div className="min-h-[600px]">
             {loadingProjects ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <ProjectSkeleton key={i} />
-              ))
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <ProjectSkeleton key={i} />
+                ))}
+              </div>
             ) : (
-              <AnimatePresence>
-                {visibleProjects.map((project) => (
-                  <motion.div 
-                    key={project.id}
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ 
-                      duration: 0.4,
-                      ease: "easeOut"
-                    }}
-                    onClick={() => setSelectedProject(project)}
-                    className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50 border border-white/5"
-                  >
-                    <div className="w-full h-full overflow-hidden">
-                      <img 
-                        src={project.imageUrl} 
-                        alt={project.title}
-                        loading="lazy"
-                        className="w-full h-full object-cover object-top transition-all duration-[5000ms] ease-in-out group-hover:object-bottom"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                      <span className="text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-2">{project.category}</span>
-                      <h3 className="text-2xl font-display font-bold uppercase tracking-tighter mb-4">{project.title}</h3>
-                      <div className="flex items-center gap-4">
-                        <button className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-brand-orange hover:text-white transition-colors">
-                          <Play className="w-4 h-4 fill-current" />
-                        </button>
-                        <span className="text-[10px] font-bold uppercase tracking-widest">View Details</span>
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={activeTab}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[600px] w-full"
+                >
+                  {visibleProjects.map((project) => (
+                    <div 
+                      key={project.id}
+                      onClick={() => setSelectedProject(project)}
+                      className="group relative aspect-[3/4] rounded-3xl overflow-hidden cursor-pointer bg-brand-dark/50 border border-white/5"
+                    >
+                      <div className="w-full h-full overflow-hidden">
+                        <img 
+                          src={project.imageUrl} 
+                          alt={project.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover object-top transition-all duration-[5000ms] ease-in-out group-hover:object-bottom"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                        <span className="text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-2">{project.category}</span>
+                        <h3 className="text-2xl font-display font-bold uppercase tracking-tighter mb-4">{project.title}</h3>
+                        <div className="flex items-center gap-4">
+                          <button className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-brand-orange hover:text-white transition-colors">
+                            <Play className="w-4 h-4 fill-current" />
+                          </button>
+                          <span className="text-[10px] font-bold uppercase tracking-widest">View Details</span>
+                        </div>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
+                  ))}
+                </motion.div>
               </AnimatePresence>
             )}
           </div>
@@ -444,7 +443,7 @@ export default function Home() {
             </div>
           )}
         </div>
-      </motion.section>
+      </section>
 
       {/* Contact Section */}
       <motion.section 
