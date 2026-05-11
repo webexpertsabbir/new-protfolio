@@ -24,7 +24,7 @@ import { cn } from "@/src/lib/utils";
 import { SERVICES } from "../constants/services";
 import { INTERESTS } from "../constants/interests";
 
-// Import Services
+// Import Service
 import { sendEmail } from "../services/emailService";
 import { getProjects, getCategories, Project } from "../services/projectService";
 

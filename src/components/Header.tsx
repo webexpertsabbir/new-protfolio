@@ -37,10 +37,10 @@ export function Header() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
-              link.name === "Home" ? (
+              link.name === "Home" || link.name === "Holy Quran" ? (
                 <Link 
                   key={link.name} 
-                  to="/"
+                  to={link.name === "Home" ? "/" : link.href}
                   className="text-sm font-medium text-white/70 hover:text-white transition-colors uppercase tracking-widest"
                 >
                   {link.name}
@@ -93,10 +93,10 @@ export function Header() {
               <X className="w-8 h-8" />
             </button>
             {NAV_LINKS.map((link) => (
-              link.name === "Home" ? (
+              link.name === "Home" || link.name === "Holy Quran" ? (
                 <Link 
                   key={link.name} 
-                  to="/"
+                  to={link.name === "Home" ? "/" : link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-4xl font-display font-bold uppercase tracking-tighter hover:text-brand-orange transition-colors"
                 >

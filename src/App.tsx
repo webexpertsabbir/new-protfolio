@@ -27,6 +27,7 @@ import { Footer } from "./components/Footer";
 // Lazy load pages for performance
 const Home = lazy(() => import("./pages/Home"));
 const Admin = lazy(() => import("./pages/Admin"));
+const Quran = lazy(() => import("./pages/Quran"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback
@@ -108,6 +109,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/quran" element={<Quran />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
